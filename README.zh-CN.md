@@ -2,7 +2,7 @@
 
 [English](README.md) | [中文](README.zh-CN.md)
 
-A PHP library for interacting with Ethereum blockchain and Web3 services.
+用于与以太坊区块链和 Web3 服务交互的 PHP 库。
 
 ## 简介
 

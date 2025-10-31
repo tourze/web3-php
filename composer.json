@@ -1,0 +1,30 @@
+{
+  "name": "tourze/web3-php",
+  "description": "PHP library for interacting with Ethereum blockchain and Web3 services",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "guzzlehttp/guzzle": "^7.9.2",
+    "guzzlehttp/psr7": "^2.6",
+    "kornrunner/keccak": "^1.1",
+    "phpseclib/phpseclib": "^3.0.43",
+    "psr/http-message": "^1.1 || ^2.0"
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^2.1",
+    "phpunit/phpunit": "^11.5",
+    "symfony/framework-bundle": "^7.3",
+    "tourze/phpunit-base": "1.*",
+    "tourze/symfony-testing-framework": "0.0.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Tourze\\Web3PHP\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tourze\\Web3PHP\\Tests\\": "tests/"
+    }
+  }
+}
