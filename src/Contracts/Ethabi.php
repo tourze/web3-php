@@ -11,7 +11,6 @@
 
 namespace Tourze\Web3PHP\Contracts;
 
-use Tourze\Web3PHP\Contracts\Types;
 use Tourze\Web3PHP\Exception\InvalidArgumentException;
 use Tourze\Web3PHP\Formatters\IntegerFormatter;
 use Tourze\Web3PHP\Utils;
