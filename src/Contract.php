@@ -107,7 +107,6 @@ class Contract
         $method = 'get' . ucfirst($name);
 
         if (method_exists($this, $method)) {
-            /** @phpstan-ignore-next-line */
             return $this->{$method}();
         }
 
@@ -123,7 +122,6 @@ class Contract
         $method = 'set' . ucfirst($name);
 
         if (method_exists($this, $method)) {
-            /** @phpstan-ignore-next-line */
             $this->{$method}($value);
         }
     }

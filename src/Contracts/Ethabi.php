@@ -16,9 +16,6 @@ use Tourze\Web3PHP\Exception\InvalidArgumentException;
 use Tourze\Web3PHP\Formatters\IntegerFormatter;
 use Tourze\Web3PHP\Utils;
 
-/**
- * @phpstan-ignore-next-line
- */
 class Ethabi
 {
     /**

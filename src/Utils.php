@@ -19,7 +19,6 @@ use Tourze\Web3PHP\Exception\InvalidArgumentException;
  * @phpstan-type FractionalNumber array{0: BigNumber, 1: BigNumber, 2: int, 3: BigNumber|false}
  * @phpstan-type JsonMethodInput array{type?: string}|object{type?: string}
  * @phpstan-type JsonMethodData array{name: string, inputs?: array<JsonMethodInput>}
- * @phpstan-ignore-next-line
  */
 class Utils
 {
