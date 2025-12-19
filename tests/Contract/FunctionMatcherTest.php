@@ -44,17 +44,19 @@ final class FunctionMatcherTest extends TestCase
             public function encodeParameters(mixed $function, mixed $params): string
             {
                 if (null !== $this->nextException) {
-                    /** @phpstan-ignore-next-line symplify.noJustPropertyAssign */
-                    $exceptionToThrow = $this->nextException;
-                    $this->nextException = null;
-                    throw $exceptionToThrow;
+                    try {
+                        throw $this->nextException;
+                    } finally {
+                        $this->nextException = null;
+                    }
                 }
 
                 if (null !== $this->nextReturnValue) {
-                    $value = $this->nextReturnValue;
-                    $this->nextReturnValue = null;
-
-                    return $value;
+                    try {
+                        return $this->nextReturnValue;
+                    } finally {
+                        $this->nextReturnValue = null;
+                    }
                 }
 
                 return 'default_encoded_data';

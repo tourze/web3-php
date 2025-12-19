@@ -57,7 +57,6 @@ final class UtilsTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The value to toHex function is not support.');
-        // @phpstan-ignore-next-line
         Utils::toHex((object) []);
     }
 
@@ -72,7 +71,6 @@ final class UtilsTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The value to hexToBin function must be string.');
-        // @phpstan-ignore-next-line
         Utils::hexToBin(123);
     }
 
@@ -88,7 +86,6 @@ final class UtilsTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The value to isZeroPrefixed function must be string.');
-        // @phpstan-ignore-next-line
         Utils::isZeroPrefixed(123);
     }
 
@@ -112,7 +109,6 @@ final class UtilsTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The value to isNegative function must be string.');
-        // @phpstan-ignore-next-line
         Utils::isNegative(-123);
     }
 
@@ -135,7 +131,6 @@ final class UtilsTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The value to isAddress function must be string.');
-        // @phpstan-ignore-next-line
         Utils::isAddress(123);
     }
 
@@ -152,7 +147,6 @@ final class UtilsTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The value to isAddressChecksum function must be string.');
-        // @phpstan-ignore-next-line
         Utils::isAddressChecksum(123);
     }
 
@@ -168,7 +162,6 @@ final class UtilsTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The value to toChecksumAddress function must be string.');
-        // @phpstan-ignore-next-line
         Utils::toChecksumAddress(123);
     }
 
@@ -207,7 +200,6 @@ final class UtilsTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The value to sha3 function must be string.');
-        // @phpstan-ignore-next-line
         Utils::sha3(123);
     }
 
@@ -252,7 +244,6 @@ final class UtilsTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('toWei number must be string or bignumber.');
-        // @phpstan-ignore-next-line
         Utils::toWei(123.45, 'ether');
     }
 
@@ -260,7 +251,6 @@ final class UtilsTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('toWei unit must be string.');
-        // @phpstan-ignore-next-line
         Utils::toWei('1', 123);
     }
 
@@ -304,7 +294,6 @@ final class UtilsTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('fromWei unit must be string.');
-        // @phpstan-ignore-next-line
         Utils::fromWei('1000', 123);
     }
 
@@ -357,7 +346,6 @@ final class UtilsTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('jsonMethodToString json must be array or stdClass.');
-        // @phpstan-ignore-next-line
         Utils::jsonMethodToString('invalid');
     }
 
@@ -464,7 +452,6 @@ final class UtilsTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('toBn number must be BigNumber, string or int.');
-        // @phpstan-ignore-next-line
         Utils::toBn([]);
     }
 

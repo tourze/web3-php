@@ -27,16 +27,14 @@ final class SolidityTypeTest extends TestCase
     public function testMagicGetMethod(): void
     {
         // Test with non-existent property
-        // @phpstan-ignore-next-line 故意访问未定义属性测试魔术方法
-        $result = $this->solidityType->nonExistentProperty;
+        $result = $this->solidityType->nonExistentProperty; // @phpstan-ignore property.notFound
         $this->assertFalse($result);
     }
 
     public function testMagicSetMethod(): void
     {
         // Test with non-existent method
-        // @phpstan-ignore-next-line 故意设置未定义属性测试魔术方法
-        $this->solidityType->nonExistentProperty = 'value';
+        $this->solidityType->nonExistentProperty = 'value'; // @phpstan-ignore property.notFound
         // Since __set returns void, we just verify no exception is thrown
         // 测试设置属性后对象仍然存在
         $this->assertInstanceOf(SolidityType::class, $this->solidityType);
@@ -70,7 +68,6 @@ final class SolidityTypeTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('nestedTypes name must string.');
-        // @phpstan-ignore-next-line
         $this->solidityType->nestedTypes(123);
     }
 
@@ -99,7 +96,6 @@ final class SolidityTypeTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('nestedName name must string.');
-        // @phpstan-ignore-next-line
         $this->solidityType->nestedName(123);
     }
 

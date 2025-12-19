@@ -12,6 +12,7 @@
 namespace Tourze\Web3PHP\Formatters;
 
 use Tourze\Web3PHP\Exception\InvalidArgumentException;
+use Tourze\Web3PHP\HexUtils;
 use Tourze\Web3PHP\Utils;
 
 class QuantityFormatter implements IFormatter
@@ -36,7 +37,7 @@ class QuantityFormatter implements IFormatter
      */
     private static function processValue(string $value): string
     {
-        if (Utils::isZeroPrefixed($value)) {
+        if (HexUtils::isZeroPrefixed($value)) {
             return self::processHexValue($value);
         }
 

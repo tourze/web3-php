@@ -80,15 +80,13 @@ final class RequestManagerTest extends TestCase
 
     public function testMagicGetReturnsFalseForNonExistentProperty(): void
     {
-        // @phpstan-ignore-next-line 故意访问未定义属性测试魔术方法
-        $result = $this->requestManager->nonExistentProperty;
+        $result = $this->requestManager->nonExistentProperty; // @phpstan-ignore property.notFound
         $this->assertFalse($result);
     }
 
     public function testMagicGetReturnsFalseForNonExistentMethod(): void
     {
-        // @phpstan-ignore-next-line 故意访问未定义属性测试魔术方法
-        $result = $this->requestManager->invalidProperty;
+        $result = $this->requestManager->invalidProperty; // @phpstan-ignore property.notFound
         $this->assertFalse($result);
     }
 
@@ -97,8 +95,7 @@ final class RequestManagerTest extends TestCase
         $originalHost = $this->requestManager->getHost();
 
         // Test that setting non-existent property doesn't change anything
-        // @phpstan-ignore-next-line 故意设置未定义属性测试魔术方法
-        $this->requestManager->nonExistentProperty = 'value';
+        $this->requestManager->nonExistentProperty = 'value'; // @phpstan-ignore property.notFound
         $this->assertSame($originalHost, $this->requestManager->getHost());
     }
 
@@ -107,8 +104,7 @@ final class RequestManagerTest extends TestCase
         $originalHost = $this->requestManager->getHost();
 
         // Test that setting invalid property doesn't change anything
-        // @phpstan-ignore-next-line 故意设置未定义属性测试魔术方法
-        $this->requestManager->invalidProperty = 'value';
+        $this->requestManager->invalidProperty = 'value'; // @phpstan-ignore property.notFound
         $this->assertSame($originalHost, $this->requestManager->getHost());
     }
 

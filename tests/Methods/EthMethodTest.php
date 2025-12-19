@@ -86,8 +86,6 @@ final class EthMethodTest extends TestCase
 
         // 在 PHP 8.0+ 中，类型不匹配会抛出 TypeError
         $this->expectException(\TypeError::class);
-
-        /** @phpstan-ignore-next-line 故意传入字符串测试错误情况 */
         $method->validateArguments('invalid'); // 传入字符串而不是数组
     }
 
@@ -114,8 +112,6 @@ final class EthMethodTest extends TestCase
 
         // 在 PHP 8.0+ 中，类型不匹配会抛出 TypeError
         $this->expectException(\TypeError::class);
-
-        /** @phpstan-ignore-next-line 故意传入字符串测试错误情况 */
         $method->formatArguments('invalid'); // 传入字符串而不是数组
     }
 

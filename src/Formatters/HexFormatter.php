@@ -11,6 +11,7 @@
 
 namespace Tourze\Web3PHP\Formatters;
 
+use Tourze\Web3PHP\HexUtils;
 use Tourze\Web3PHP\Utils;
 
 class HexFormatter implements IFormatter
@@ -26,10 +27,10 @@ class HexFormatter implements IFormatter
         $value = Utils::toString($value);
         $value = mb_strtolower($value);
 
-        if (Utils::isZeroPrefixed($value)) {
+        if (HexUtils::isZeroPrefixed($value)) {
             return $value;
         }
 
-        return Utils::toHex($value, true);
+        return HexUtils::toHex($value, true);
     }
 }

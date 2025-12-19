@@ -13,7 +13,7 @@ namespace Tourze\Web3PHP\Contract;
 
 use Tourze\Web3PHP\Contracts\Ethabi;
 use Tourze\Web3PHP\Exception\InvalidArgumentException;
-use Tourze\Web3PHP\Utils;
+use Tourze\Web3PHP\JsonUtils;
 
 /**
  * 函数匹配器 - 专门处理函数查找和匹配
@@ -105,7 +105,7 @@ class FunctionMatcher
     {
         try {
             $encodedData = $this->ethabi->encodeParameters($function, $params);
-            $functionName = Utils::jsonMethodToString($function);
+            $functionName = JsonUtils::jsonMethodToString($function);
 
             return [
                 'function' => $function,

@@ -59,16 +59,14 @@ final class EthabiTest extends TestCase
     public function testMagicGetMethod(): void
     {
         // Test with non-existent property
-        // @phpstan-ignore-next-line 故意访问未定义属性测试魔术方法
-        $result = $this->ethabi->nonExistentProperty;
+        $result = $this->ethabi->nonExistentProperty; // @phpstan-ignore property.notFound
         $this->assertFalse($result);
     }
 
     public function testMagicSetMethod(): void
     {
         // Test with non-existent method
-        // @phpstan-ignore-next-line 故意设置未定义属性测试魔术方法
-        $this->ethabi->nonExistentProperty = 'value';
+        $this->ethabi->nonExistentProperty = 'value'; // @phpstan-ignore property.notFound
         // Since __set returns void, we just verify no exception is thrown
         // 测试设置属性后对象仍然存在
         $this->assertInstanceOf(Ethabi::class, $this->ethabi);
@@ -79,8 +77,7 @@ final class EthabiTest extends TestCase
         // Test that __callStatic throws exception for non-existent method
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Method not found: nonExistentMethod');
-        // @phpstan-ignore-next-line PHPStan 无法识别 __callStatic 魔术方法
-        Ethabi::nonExistentMethod();
+        Ethabi::nonExistentMethod(); // @phpstan-ignore staticMethod.notFound
     }
 
     public function testEncodeFunctionSignatureWithString(): void
@@ -150,7 +147,6 @@ final class EthabiTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The type to encodeParameter must be string.');
-        // @phpstan-ignore-next-line
         $this->ethabi->encodeParameter(123, 'value');
     }
 
@@ -215,7 +211,6 @@ final class EthabiTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The type to decodeParameter must be string.');
-        // @phpstan-ignore-next-line
         $this->ethabi->decodeParameter(123, '0x123');
     }
 
@@ -231,7 +226,6 @@ final class EthabiTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The type or param to decodeParameters must be string.');
-        // @phpstan-ignore-next-line
         $this->ethabi->decodeParameters(['uint256'], 123);
     }
 
@@ -323,45 +317,6 @@ final class EthabiTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unsupport solidity parameter type: unsupported');
         $method->invokeArgs($this->ethabi, [['unsupported']]);
-    }
-
-    public function testEncodeWithOffsetForDynamicArray(): void
-    {
-        $reflection = new \ReflectionClass($this->ethabi);
-        $method = $reflection->getMethod('encodeWithOffset');
-        $method->setAccessible(true);
-
-        $solidityType = new Uinteger();
-        $encoded = ['0000000000000000000000000000000000000000000000000000000000000002', 'encoded1', 'encoded2'];
-
-        $result = $method->invokeArgs($this->ethabi, ['uint256[]', $solidityType, $encoded, 64]);
-        $this->assertIsString($result);
-    }
-
-    public function testEncodeWithOffsetForStaticArray(): void
-    {
-        $reflection = new \ReflectionClass($this->ethabi);
-        $method = $reflection->getMethod('encodeWithOffset');
-        $method->setAccessible(true);
-
-        $solidityType = new Uinteger();
-        $encoded = ['encoded1', 'encoded2'];
-
-        $result = $method->invokeArgs($this->ethabi, ['uint256[2]', $solidityType, $encoded, 64]);
-        $this->assertIsString($result);
-    }
-
-    public function testEncodeWithOffsetForRegularType(): void
-    {
-        $reflection = new \ReflectionClass($this->ethabi);
-        $method = $reflection->getMethod('encodeWithOffset');
-        $method->setAccessible(true);
-
-        $solidityType = new Uinteger();
-        $encoded = 'encoded_value';
-
-        $result = $method->invokeArgs($this->ethabi, ['uint256', $solidityType, $encoded, 64]);
-        $this->assertSame('encoded_value', $result);
     }
 
     public function testEncodeMultiWithOffset(): void

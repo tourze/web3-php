@@ -11,9 +11,10 @@
 
 namespace Tourze\Web3PHP\Contracts\Types;
 
+use Tourze\Web3PHP\AddressUtils;
 use Tourze\Web3PHP\Contracts\SolidityType;
 use Tourze\Web3PHP\Formatters\IntegerFormatter;
-use Tourze\Web3PHP\Utils;
+use Tourze\Web3PHP\HexUtils;
 
 class Address extends SolidityType implements IType
 {
@@ -59,11 +60,11 @@ class Address extends SolidityType implements IType
     {
         $value = (string) $value;
 
-        if (Utils::isAddress($value)) {
+        if (AddressUtils::isAddress($value)) {
             $value = mb_strtolower($value);
 
-            if (Utils::isZeroPrefixed($value)) {
-                $value = Utils::stripZero($value);
+            if (HexUtils::isZeroPrefixed($value)) {
+                $value = HexUtils::stripZero($value);
             }
         }
 

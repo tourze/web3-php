@@ -12,7 +12,7 @@
 namespace Tourze\Web3PHP\Contract;
 
 use Tourze\Web3PHP\Exception\InvalidArgumentException;
-use Tourze\Web3PHP\Utils;
+use Tourze\Web3PHP\JsonUtils;
 
 /**
  * ABI解析器 - 专门处理ABI相关逻辑
@@ -49,7 +49,7 @@ class AbiParser
             return $this->decodeJsonAbi($abi);
         }
 
-        return Utils::jsonToArray($abi);
+        return JsonUtils::jsonToArray($abi);
     }
 
     /**

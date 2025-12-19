@@ -13,7 +13,10 @@ namespace Tourze\Web3PHP\Contracts;
 
 use Tourze\Web3PHP\Exception\InvalidArgumentException;
 use Tourze\Web3PHP\Formatters\IntegerFormatter;
+use Tourze\Web3PHP\HexUtils;
+use Tourze\Web3PHP\JsonUtils;
 use Tourze\Web3PHP\Utils;
+
 
 class Ethabi
 {
@@ -23,6 +26,11 @@ class Ethabi
      * @var array<string, mixed>
      */
     protected $types = [];
+
+    /**
+     * 数组编码器
+     */
+    private ArrayEncoder $arrayEncoder;
 
     /**
      * 构造函数
@@ -35,6 +43,7 @@ class Ethabi
             $types = [];
         }
         $this->types = $types;
+        $this->arrayEncoder = new ArrayEncoder();
     }
 
     /**
@@ -98,7 +107,7 @@ class Ethabi
     public function encodeFunctionSignature($functionName)
     {
         if (!is_string($functionName)) {
-            $functionName = Utils::jsonMethodToString($functionName);
+            $functionName = JsonUtils::jsonMethodToString($functionName);
         }
 
         $hash = Utils::sha3($functionName);
@@ -120,7 +129,7 @@ class Ethabi
     public function encodeEventSignature($functionName)
     {
         if (!is_string($functionName)) {
-            $functionName = Utils::jsonMethodToString($functionName);
+            $functionName = JsonUtils::jsonMethodToString($functionName);
         }
 
         $hash = Utils::sha3($functionName);
@@ -201,7 +210,7 @@ class Ethabi
     private function normalizeTypes($types): array
     {
         if ($types instanceof \stdClass && isset($types->inputs)) {
-            $types = Utils::jsonToArray($types);
+            $types = JsonUtils::jsonToArray($types);
         }
 
         if (is_array($types) && isset($types['inputs'])) {
@@ -325,7 +334,7 @@ class Ethabi
             $solidityTypes,
             $decodingInfo['types'],
             $offsets,
-            Utils::stripZero($param),
+            HexUtils::stripZero($param),
             $decodingInfo['outputs'] ?? null
         );
     }
@@ -339,7 +348,7 @@ class Ethabi
     private function prepareDecodingInfo($types): array
     {
         if ($types instanceof \stdClass && isset($types->outputs)) {
-            $types = Utils::jsonToArray($types);
+            $types = JsonUtils::jsonToArray($types);
         }
 
         if (is_array($types) && isset($types['outputs'])) {
@@ -531,152 +540,6 @@ class Ethabi
         throw new InvalidArgumentException('Unsupport solidity parameter type: ' . $fullType);
     }
 
-    /**
-     * 使用偏移量编码
-     *
-     * @param string       $type
-     * @param SolidityType $solidityType
-     * @param mixed        $encoded
-     * @param int          $offset
-     *
-     * @return string
-     */
-    protected function encodeWithOffset($type, $solidityType, $encoded, int $offset)
-    {
-        if ($solidityType->isDynamicArray($type)) {
-            return $this->encodeDynamicArray($type, $solidityType, $encoded, $offset);
-        }
-
-        if ($solidityType->isStaticArray($type)) {
-            return $this->encodeStaticArray($type, $solidityType, $encoded, $offset);
-        }
-
-        return $encoded;
-    }
-
-    /**
-     * 编码动态数组
-     * @param mixed $type
-     * @param mixed $solidityType
-     * @param mixed $encoded
-     */
-    private function encodeDynamicArray($type, $solidityType, $encoded, int $offset): string
-    {
-        $result = $this->encodeArrayWithPointers($type, $solidityType, $encoded, $offset, true);
-
-        return mb_substr($result, 64);
-    }
-
-    /**
-     * 编码静态数组
-     * @param mixed $type
-     * @param mixed $solidityType
-     * @param mixed $encoded
-     */
-    private function encodeStaticArray($type, $solidityType, $encoded, int $offset): string
-    {
-        return $this->encodeArrayWithPointers($type, $solidityType, $encoded, $offset, false);
-    }
-
-    /**
-     * 编码数组带指针
-     * @param mixed $type
-     * @param mixed $solidityType
-     * @param mixed $encoded
-     */
-    private function encodeArrayWithPointers($type, $solidityType, $encoded, int $offset, bool $isDynamic): string
-    {
-        $nestedName = $solidityType->nestedName($type);
-        $result = $isDynamic ? $encoded[0] : '';
-
-        if ($solidityType->isDynamicArray($nestedName)) {
-            $result .= $this->buildArrayPointersForType($encoded, $solidityType, $type, $offset, $isDynamic);
-        }
-
-        $result .= $this->encodeArrayElements($encoded, $nestedName, $solidityType, $offset, $result);
-
-        return $result;
-    }
-
-    /**
-     * 为类型构建数组指针
-     * @param mixed $encoded
-     * @param mixed $solidityType
-     * @param mixed $type
-     */
-    private function buildArrayPointersForType($encoded, $solidityType, $type, int $offset, bool $isDynamic): string
-    {
-        return $isDynamic
-            ? $this->buildDynamicArrayPointers($encoded, $solidityType, $type, $offset)
-            : $this->buildStaticArrayPointers($encoded, $solidityType, $type, $offset);
-    }
-
-    /**
-     * 构建动态数组指针
-     */
-    private function buildDynamicArrayPointers(mixed $encoded, SolidityType $solidityType, string $type, int $offset): string
-    {
-        return $this->buildPointers($encoded, $solidityType, $type, $offset, 2);
-    }
-
-    /**
-     * 构建静态数组指针
-     */
-    private function buildStaticArrayPointers(mixed $encoded, SolidityType $solidityType, string $type, int $offset): string
-    {
-        return $this->buildPointers($encoded, $solidityType, $type, $offset, 0);
-    }
-
-    /**
-     * 构建指针字符串
-     */
-    private function buildPointers(mixed $encoded, SolidityType $solidityType, string $type, int $offset, int $initialPrevLength): string
-    {
-        $result = '';
-        $previousLength = $initialPrevLength;
-        $staticPartLength = $solidityType->staticPartLength($type);
-        $isDynamic = ($initialPrevLength > 0);
-
-        foreach ($encoded as $i => $item) {
-            if ($i > 0) {
-                $previousLength += $this->getPrevValueLength($encoded[$i - 1], $isDynamic);
-            }
-            $result .= IntegerFormatter::format($offset + $i * $staticPartLength + $previousLength * 32);
-        }
-
-        return $result;
-    }
-
-    /**
-     * 获取前一个值的长度
-     */
-    private function getPrevValueLength(mixed $prevValue, bool $isDynamic): int
-    {
-        if ($isDynamic) {
-            return (int) abs($prevValue[0]);
-        }
-
-        return is_array($prevValue) ? (int) abs($prevValue[0]) : (int) abs($prevValue);
-    }
-
-    /**
-     * 编码数组元素
-     * @param mixed $encoded
-     * @param mixed $nestedName
-     * @param mixed $solidityType
-     */
-    private function encodeArrayElements($encoded, $nestedName, $solidityType, int $offset, string $result): string
-    {
-        $elementResult = '';
-        $elementsCount = count($encoded);
-
-        for ($i = 0; $i < $elementsCount; ++$i) {
-            $additionalOffset = (int) floor(mb_strlen($result . $elementResult) / 2);
-            $elementResult .= $this->encodeWithOffset($nestedName, $solidityType, $encoded[$i], $offset + $additionalOffset);
-        }
-
-        return $elementResult;
-    }
 
     /**
      * 多重偏移量编码
@@ -697,11 +560,11 @@ class Ethabi
         foreach ($solidityTypes as $key => $type) {
             if ($type->isDynamicType() || $type->isDynamicArray($types[$key])) {
                 $staticPart .= IntegerFormatter::format($currentOffset);
-                $encodedElement = $this->encodeWithOffset($types[$key], $type, $encodes[$key], $currentOffset);
+                $encodedElement = $this->arrayEncoder->encodeWithOffset($types[$key], $type, $encodes[$key], $currentOffset);
                 $dynamicParts[] = $encodedElement;
                 $currentOffset += (int) floor(mb_strlen($encodedElement) / 2);
             } else {
-                $staticPart .= $this->encodeWithOffset($types[$key], $type, $encodes[$key], $currentOffset);
+                $staticPart .= $this->arrayEncoder->encodeWithOffset($types[$key], $type, $encodes[$key], $currentOffset);
             }
         }
 

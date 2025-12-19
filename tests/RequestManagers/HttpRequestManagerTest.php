@@ -427,8 +427,7 @@ final class HttpRequestManagerTest extends TestCase
 
     public function testMagicGetReturnsFalseForNonExistentProperty(): void
     {
-        // @phpstan-ignore-next-line 故意访问未定义属性测试魔术方法
-        $result = $this->requestManager->nonExistentProperty;
+        $result = $this->requestManager->nonExistentProperty; // @phpstan-ignore property.notFound
         $this->assertFalse($result);
     }
 
@@ -437,8 +436,7 @@ final class HttpRequestManagerTest extends TestCase
         $originalHost = $this->requestManager->getHost();
 
         // Test that setting non-existent property doesn't change anything
-        // @phpstan-ignore-next-line 故意设置未定义属性测试魔术方法
-        $this->requestManager->nonExistentProperty = 'value';
+        $this->requestManager->nonExistentProperty = 'value'; // @phpstan-ignore property.notFound
         $this->assertSame($originalHost, $this->requestManager->getHost());
     }
 
@@ -448,7 +446,6 @@ final class HttpRequestManagerTest extends TestCase
         $this->expectException(\TypeError::class);
 
         $callback = function ($error, $result): void {};
-        // @phpstan-ignore-next-line 故意传入数组测试错误情况
         $this->requestManager->sendPayload(['not' => 'a string'], $callback);
     }
 

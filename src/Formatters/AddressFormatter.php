@@ -11,7 +11,8 @@
 
 namespace Tourze\Web3PHP\Formatters;
 
-use Tourze\Web3PHP\Utils;
+use Tourze\Web3PHP\AddressUtils;
+use Tourze\Web3PHP\HexUtils;
 
 class AddressFormatter implements IFormatter
 {
@@ -26,10 +27,10 @@ class AddressFormatter implements IFormatter
     {
         $value = (string) $value;
 
-        if (Utils::isAddress($value)) {
+        if (AddressUtils::isAddress($value)) {
             $value = mb_strtolower($value);
 
-            if (Utils::isZeroPrefixed($value)) {
+            if (HexUtils::isZeroPrefixed($value)) {
                 return $value;
             }
 

@@ -90,7 +90,6 @@ final class AddressValidatorTest extends TestCase
 
         foreach ($nonStringValues as $value) {
             $this->assertFalse(
-                // @phpstan-ignore-next-line
                 AddressValidator::validate($value),
                 'Non-string value should be invalid'
             );

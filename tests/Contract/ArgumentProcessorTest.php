@@ -100,10 +100,11 @@ final class ArgumentProcessorTest extends TestCase
             private function throwExceptionIfNeeded(): void
             {
                 if (null !== $this->nextException) {
-                    /** @phpstan-ignore-next-line symplify.noJustPropertyAssign */
-                    $exceptionToThrow = $this->nextException;
-                    $this->nextException = null;
-                    throw $exceptionToThrow;
+                    try {
+                        throw $this->nextException;
+                    } finally {
+                        $this->nextException = null;
+                    }
                 }
             }
         };

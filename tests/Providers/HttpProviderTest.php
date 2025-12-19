@@ -63,8 +63,6 @@ final class HttpProviderTest extends TestCase
     {
         // 在 PHP 8.0+ 中，类型不匹配会抛出 TypeError
         $this->expectException(\TypeError::class);
-
-        // @phpstan-ignore-next-line 故意传入字符串测试错误情况
         $this->provider->batch('not_a_boolean');
     }
 
@@ -175,8 +173,7 @@ final class HttpProviderTest extends TestCase
 
     public function testMagicGetMethodReturnsFalseForNonExistentProperty(): void
     {
-        // @phpstan-ignore-next-line 故意访问未定义属性测试魔术方法
-        $result = $this->provider->nonExistentProperty;
+        $result = $this->provider->nonExistentProperty; // @phpstan-ignore property.notFound
         $this->assertFalse($result);
     }
 
@@ -191,8 +188,7 @@ final class HttpProviderTest extends TestCase
 
         // Test that non-existent setter doesn't change the property
         $originalRequestManager = $requestManagerProperty->getValue($this->provider);
-        // @phpstan-ignore-next-line 故意设置未定义属性测试魔术方法
-        $this->provider->nonExistentProperty = $newRequestManager;
+        $this->provider->nonExistentProperty = $newRequestManager; // @phpstan-ignore property.notFound
         $this->assertSame($originalRequestManager, $requestManagerProperty->getValue($this->provider));
     }
 }

@@ -13,6 +13,7 @@ namespace Tourze\Web3PHP\Contracts\Types;
 
 use Tourze\Web3PHP\Contracts\SolidityType;
 use Tourze\Web3PHP\Exception\InvalidArgumentException;
+use Tourze\Web3PHP\HexUtils;
 use Tourze\Web3PHP\Utils;
 
 class DynamicBytes extends SolidityType implements IType
@@ -56,10 +57,10 @@ class DynamicBytes extends SolidityType implements IType
      */
     public function inputFormat($value, $name): string
     {
-        if (!Utils::isHex($value)) {
+        if (!HexUtils::isHex($value)) {
             throw new InvalidArgumentException('输入格式化的值必须是十六进制字节。');
         }
-        $value = Utils::stripZero($value);
+        $value = HexUtils::stripZero($value);
 
         if (0 !== mb_strlen($value) % 2) {
             $value = '0' . $value;

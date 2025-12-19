@@ -14,7 +14,7 @@ namespace Tourze\Web3PHP\Contracts\Types;
 use Tourze\Web3PHP\Contracts\SolidityType;
 use Tourze\Web3PHP\Formatters\BigNumberFormatter;
 use Tourze\Web3PHP\Formatters\IntegerFormatter;
-use Tourze\Web3PHP\Utils;
+use Tourze\Web3PHP\HexUtils;
 
 class Str extends SolidityType implements IType
 {
@@ -57,7 +57,7 @@ class Str extends SolidityType implements IType
      */
     public function inputFormat($value, $name): string
     {
-        $value = Utils::toHex($value);
+        $value = HexUtils::toHex($value);
         $prefix = IntegerFormatter::format(mb_strlen($value) / 2);
         $l = floor((mb_strlen($value) + 63) / 64);
         $padding = (($l * 64 - mb_strlen($value) + 1) >= 0) ? $l * 64 - mb_strlen($value) : 0;
@@ -85,6 +85,6 @@ class Str extends SolidityType implements IType
         }
         $strValue = mb_substr($strValue, 0, (int) $strLen * 2);
 
-        return Utils::hexToBin($strValue);
+        return HexUtils::hexToBin($strValue);
     }
 }

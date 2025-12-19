@@ -19,6 +19,8 @@ use Tourze\Web3PHP\Contract\FunctionMatcher;
 use Tourze\Web3PHP\Contracts\Ethabi;
 use Tourze\Web3PHP\Exception\InvalidArgumentException;
 use Tourze\Web3PHP\Formatters\AddressFormatter;
+use Tourze\Web3PHP\HexUtils;
+use Tourze\Web3PHP\JsonUtils;
 use Tourze\Web3PHP\Providers\Provider;
 use Tourze\Web3PHP\Validators\AddressValidator;
 use Tourze\Web3PHP\Validators\HexValidator;
@@ -88,35 +90,7 @@ class Contract
         $this->setDefaultBlock($defaultBlock);
     }
 
-    /**
-     * 获取属性
-     * @return mixed
-     */
-    public function __get(string $name)
-    {
-        $method = 'get' . ucfirst($name);
-
-        if (method_exists($this, $method)) {
-            return $this->{$method}();
-        }
-
-        return false;
-    }
-
-    /**
-     * 设置属性
-     * @param mixed $value
-     */
-    public function __set(string $name, $value): void
-    {
-        $method = 'set' . ucfirst($name);
-
-        if (method_exists($this, $method)) {
-            $this->{$method}($value);
-        }
-    }
-
-    // 简化的Getter方法
+    // Getter方法
     public function getProvider(): Provider
     {
         return $this->provider;
@@ -247,7 +221,7 @@ class Contract
         if (!HexValidator::validate($bytecode)) {
             throw new InvalidArgumentException('Please make sure bytecode is valid.');
         }
-        $this->bytecode = Utils::stripZero($bytecode);
+        $this->bytecode = HexUtils::stripZero($bytecode);
     }
 
     /**
@@ -301,7 +275,7 @@ class Contract
         if (!is_array($transaction)) {
             throw new InvalidArgumentException('Transaction data must be an array.');
         }
-        $transaction['data'] = '0x' . $this->bytecode . Utils::stripZero($data);
+        $transaction['data'] = '0x' . $this->bytecode . HexUtils::stripZero($data);
 
         /** @var array<string, mixed> $transaction */
         $this->eth->sendTransaction($transaction, function ($err, $transaction) use ($callback) {
@@ -328,7 +302,7 @@ class Contract
         $transaction = $request['transaction'];
         $transaction['to'] = $this->toAddress;
         $transaction['data'] = $this->ethabi->encodeFunctionSignature($functionData['functionName']) .
-            Utils::stripZero($functionData['encodedData']);
+            HexUtils::stripZero($functionData['encodedData']);
 
         $this->eth->sendTransaction($transaction, function ($err, $transaction) use ($request) {
             return call_user_func($request['callback'], $err, $err ? null : $transaction);
@@ -351,11 +325,11 @@ class Contract
         /** @var array<int, mixed> $params */
         $params = $functionMatch['params'];
         $encodedData = $this->ethabi->encodeParameters($functionMatch['function'], $params);
-        $functionName = Utils::jsonMethodToString($functionMatch['function']);
+        $functionName = JsonUtils::jsonMethodToString($functionMatch['function']);
 
         $transaction = $callInfo['transaction'];
         $transaction['to'] = $this->toAddress;
-        $transaction['data'] = $this->ethabi->encodeFunctionSignature($functionName) . Utils::stripZero($encodedData);
+        $transaction['data'] = $this->ethabi->encodeFunctionSignature($functionName) . HexUtils::stripZero($encodedData);
 
         $this->eth->call($transaction, $callInfo['defaultBlock'], function ($err, $result) use ($callInfo, $functionMatch) {
             if ($err) {
@@ -389,7 +363,7 @@ class Contract
             $data = $this->ethabi->encodeParameters($this->constructor, $params);
 
             $transaction = $request['transaction'];
-            $transaction['data'] = '0x' . $this->bytecode . Utils::stripZero($data);
+            $transaction['data'] = '0x' . $this->bytecode . HexUtils::stripZero($data);
             $callback = $request['callback'];
         } else {
             $request = $this->argumentProcessor->processFunctionArguments($arguments);
@@ -402,7 +376,7 @@ class Contract
             $transaction = $request['transaction'];
             $transaction['to'] = $this->toAddress;
             $transaction['data'] = $this->ethabi->encodeFunctionSignature($functionData['functionName']) .
-                Utils::stripZero($functionData['encodedData']);
+                HexUtils::stripZero($functionData['encodedData']);
             $callback = $request['callback'];
         }
 
@@ -452,7 +426,7 @@ class Contract
         /** @var array<int, mixed> $params */
         $data = $this->ethabi->encodeParameters($this->constructor, $params);
 
-        return $this->bytecode . Utils::stripZero($data);
+        return $this->bytecode . HexUtils::stripZero($data);
     }
 
     /**
@@ -484,10 +458,10 @@ class Contract
             try {
                 /** @var array<int, mixed> $arguments */
                 $data = $this->ethabi->encodeParameters($function, $arguments);
-                $functionName = Utils::jsonMethodToString($function);
+                $functionName = JsonUtils::jsonMethodToString($function);
                 $functionSignature = $this->ethabi->encodeFunctionSignature($functionName);
 
-                return Utils::stripZero($functionSignature) . Utils::stripZero($data);
+                return HexUtils::stripZero($functionSignature) . HexUtils::stripZero($data);
             } catch (\InvalidArgumentException $e) {
                 continue;
             }

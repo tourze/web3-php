@@ -97,7 +97,6 @@ final class Web3Test extends TestCase
     public function testInvalidProviderThrowsException(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        /** @phpstan-ignore-next-line Intentionally passing wrong type to test exception */
         new Web3(123);
     }
 

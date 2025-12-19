@@ -16,9 +16,11 @@ use phpseclib3\Math\BigInteger as BigNumber;
 use Tourze\Web3PHP\Exception\InvalidArgumentException;
 
 /**
+ * 工具类，提供十六进制转换、地址验证、Wei转换等功能
+ *
  * @phpstan-type FractionalNumber array{0: BigNumber, 1: BigNumber, 2: int, 3: BigNumber|false}
- * @phpstan-type JsonMethodInput array{type?: string}|object{type?: string}
- * @phpstan-type JsonMethodData array{name: string, inputs?: array<JsonMethodInput>}
+ * @phpstan-type JsonMethodInput object|array<string, mixed>
+ * @phpstan-ignore complexity.classLike
  */
 class Utils
 {
@@ -398,9 +400,9 @@ class Utils
 
     /**
      * 计算Wei值
-     * @param BigNumber|FractionalNumber $bn
+     * @param BigNumber|array{0: BigNumber, 1: BigNumber, 2: int, 3: BigNumber|false} $bn
      */
-    private static function calculateWeiValue($bn, BigNumber $unitMultiplier, string $unit): BigNumber
+    private static function calculateWeiValue(BigNumber|array $bn, BigNumber $unitMultiplier, string $unit): BigNumber
     {
         if (is_array($bn)) {
             return self::processFractionalToWei($bn, $unitMultiplier, $unit);
@@ -429,7 +431,7 @@ class Utils
 
     /**
      * 处理分数转 Wei
-     * @param FractionalNumber $fractionComponents
+     * @param array{0: BigNumber, 1: BigNumber, 2: int, 3: BigNumber|false} $fractionComponents
      */
     private static function processFractionalToWei(array $fractionComponents, BigNumber $unitMultiplier, string $unit): BigNumber
     {
@@ -545,9 +547,9 @@ class Utils
 
     /**
      * 从参数中提取类型
-     * @param JsonMethodInput $param
+     * @param object|array<string, mixed> $param
      */
-    private static function extractTypeFromParam($param): ?string
+    private static function extractTypeFromParam(object|array $param): ?string
     {
         if (is_object($param) && property_exists($param, 'type')) {
             return $param->type;
@@ -584,7 +586,7 @@ class Utils
 
     /**
      * 转换为大数
-     * @return BigNumber|FractionalNumber
+     * @return BigNumber|array{0: BigNumber, 1: BigNumber, 2: int, 3: BigNumber|false}
      */
     public static function toBn(mixed $number): BigNumber|array
     {
@@ -624,7 +626,7 @@ class Utils
 
     /**
      * 处理数值字符串
-     * @return BigNumber|FractionalNumber
+     * @return BigNumber|array{0: BigNumber, 1: BigNumber, 2: int, 3: BigNumber|false}
      */
     private static function processNumericString(string $number): BigNumber|array
     {
@@ -650,7 +652,7 @@ class Utils
 
     /**
      * 创建分数数组
-     * @return FractionalNumber
+     * @return array{0: BigNumber, 1: BigNumber, 2: int, 3: BigNumber|false}
      */
     private static function createFractionalArray(string $number, bool $isNegative): array
     {
